@@ -87,4 +87,4 @@ async def predict(image: Annotated[bytes, File()]):
     prediction = loaded_model.predict(np.expand_dims(img_array, axis=0))
     prediction = layers.Softmax()(prediction)
     prediction = np.array(prediction[0])
-    return {"file_size": prediction.tolist()}
+    return {"prediction": prediction.tolist()}
