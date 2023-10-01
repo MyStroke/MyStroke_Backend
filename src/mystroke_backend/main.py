@@ -20,7 +20,7 @@ class MyModel(keras.Model):
 
         self.inp_norm = layers.Normalization()
 
-        self.conv = kwargs.pop("conv", None) or keras.applications.mobilenet.MobileNet(
+        self.conv = kwargs.pop("conv", None) or keras.applications.efficientnet_v2.EfficientNetV2S(
             input_shape=(224, 224, 3),
             include_top=False,
             weights='imagenet',
@@ -73,7 +73,7 @@ app = FastAPI()
 
 loaded_model = MyModel()
 loaded_model.predict(np.zeros((1, 224, 224, 3)))
-loaded_model.load_weights("mystroke_moblienet_87_224_weights.h5")
+loaded_model.load_weights("mystroke_efficientnet_95_224_weights.h5")
 
 @app.get("/")
 async def root():
