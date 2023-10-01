@@ -84,6 +84,10 @@ async def predict(image: Annotated[bytes, File()]):
     img = Image.open(io.BytesIO(image))
     img_array = np.array(img)
     img_array = tf.image.resize(img_array, (224, 224))
+
+    # check if image is rgba and convert to rgb
+    if img_array.shape[2] == 4:
+        img_array = img_array[:, :, :3]
     prediction = loaded_model.predict(np.expand_dims(img_array, axis=0))
     prediction = layers.Softmax()(prediction)
     prediction = np.array(prediction[0])
