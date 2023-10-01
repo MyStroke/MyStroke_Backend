@@ -5,6 +5,7 @@ import io
 # from model import MyModel
 
 from fastapi import FastAPI, File
+from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -71,6 +72,16 @@ class MyModel(keras.Model):
 
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 loaded_model = MyModel()
 loaded_model.predict(np.zeros((1, 224, 224, 3)))
 loaded_model.load_weights("mystroke_efficientnet_95_224_weights.h5")
@@ -82,9 +93,11 @@ async def root():
 @app.post("/predict")
 async def predict(image: Annotated[bytes, File()]):
     img = Image.open(io.BytesIO(image))
+    iml = img.save("geeks.png")
     img_array = np.array(img)
+    print(img_array.shape)
     img_array = tf.image.resize(img_array, (224, 224))
-
+    print(img_array)
     # check if image is rgba and convert to rgb
     if img_array.shape[2] == 4:
         img_array = img_array[:, :, :3]
