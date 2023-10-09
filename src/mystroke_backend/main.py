@@ -2,8 +2,6 @@
 from typing import Annotated
 import io
 
-# from model import MyModel
-
 from fastapi import FastAPI, File
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
@@ -93,14 +91,11 @@ async def root():
 @app.post("/predict")
 async def predict(image: Annotated[bytes, File()]):
     img = Image.open(io.BytesIO(image))
-    iml = img.save("geeks.png")
+    img = img.convert("RGB")
+
     img_array = np.array(img)
-    print(img_array.shape)
     img_array = tf.image.resize(img_array, (224, 224))
-    print(img_array)
-    # check if image is rgba and convert to rgb
-    if img_array.shape[2] == 4:
-        img_array = img_array[:, :, :3]
+
     prediction = loaded_model.predict(np.expand_dims(img_array, axis=0))
     prediction = layers.Softmax()(prediction)
     prediction = np.array(prediction[0])

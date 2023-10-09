@@ -1,0 +1,8 @@
+services:
+  core_api:
+    build: .
+    container_name: "core-api-container"
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
