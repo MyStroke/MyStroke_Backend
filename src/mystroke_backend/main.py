@@ -4,35 +4,51 @@ import io
 
 from fastapi import FastAPI, File
 from fastapi.middleware.cors import CORSMiddleware
+
 import numpy as np
 import tensorflow as tf
 from PIL import Image
 from tensorflow import keras
 from tensorflow.keras import layers
 
+
 class MyModel(keras.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
-        self.data_augmentation_1 = kwargs.pop('data_augmentation_1', None) or layers.RandomFlip("horizontal")
-        self.data_augmentation_2 = kwargs.pop('data_augmentation_2', None) or layers.RandomRotation(factor=0.1)
+
+        self.data_augmentation_1 = kwargs.pop(
+            "data_augmentation_1", None
+        ) or layers.RandomFlip("horizontal")
+        self.data_augmentation_2 = kwargs.pop(
+            "data_augmentation_2", None
+        ) or layers.RandomRotation(factor=0.1)
 
         self.inp_norm = layers.Normalization()
 
-        self.conv = kwargs.pop("conv", None) or keras.applications.efficientnet_v2.EfficientNetV2S(
+        self.conv = kwargs.pop(
+            "conv", None
+        ) or keras.applications.efficientnet_v2.EfficientNetV2S(
             input_shape=(224, 224, 3),
             include_top=False,
-            weights='imagenet',
-            #pooling="avg"
-            )
+            weights="imagenet",
+            # pooling="avg"
+        )
 
         self.conv.trainable = False
 
         self.flatten = layers.Flatten()
-        self.dense_1 = kwargs.pop("dense_1", None) or layers.Dense(128, activation=keras.activations.mish)
-        self.dense_2 = kwargs.pop("dense_2", None) or layers.Dense(128, activation=keras.activations.mish)
-        self.dense_3 = kwargs.pop("dense_3", None) or layers.Dense(128, activation=keras.activations.mish)
-        self.dense_4 = kwargs.pop("dense_4", None) or layers.Dense(128, activation=keras.activations.mish)
+        self.dense_1 = kwargs.pop("dense_1", None) or layers.Dense(
+            128, activation=keras.activations.mish
+        )
+        self.dense_2 = kwargs.pop("dense_2", None) or layers.Dense(
+            128, activation=keras.activations.mish
+        )
+        self.dense_3 = kwargs.pop("dense_3", None) or layers.Dense(
+            128, activation=keras.activations.mish
+        )
+        self.dense_4 = kwargs.pop("dense_4", None) or layers.Dense(
+            128, activation=keras.activations.mish
+        )
 
         self.batch_norm_1 = layers.BatchNormalization()
         self.batch_norm_2 = layers.BatchNormalization()
@@ -68,6 +84,7 @@ class MyModel(keras.Model):
 
         return x
 
+
 app = FastAPI()
 
 origins = ["*"]
@@ -84,9 +101,11 @@ loaded_model = MyModel()
 loaded_model.predict(np.zeros((1, 224, 224, 3)))
 loaded_model.load_weights("mystroke_efficientnet_95_224_weights.h5")
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
 
 @app.post("/predict")
 async def predict(image: Annotated[bytes, File()]):
@@ -103,4 +122,4 @@ async def predict(image: Annotated[bytes, File()]):
         "prediction": prediction.tolist(),
         "argmax": np.argmax(prediction).tolist(),
         "top_2": np.argsort(prediction)[-2:].tolist(),
-        }
+    }
