@@ -8,3 +8,5 @@ wheels/
 
 # venv
 .venv
+
+hand_efficientnet_91_224/
