@@ -1,1 +1,1 @@
-hand_efficientnet_91_224/** filter=lfs diff=lfs merge=lfs -text
+hand_mediapipe_85-95_(21_2)/** filter=lfs diff=lfs merge=lfs -text
