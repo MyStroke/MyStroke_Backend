@@ -39,7 +39,7 @@ async def predict(image: Annotated[bytes, File()]):
     img_array = np.array(img)
     img_array = tf.image.resize(img_array, (224, 224))
 
-    prediction, _ = loaded_model(np.expand_dims(img_array, axis=0))
+    prediction, _ = loaded_model(img_array)
     prediction = np.array(prediction[0])
     return {
         "prediction": prediction.tolist(),
