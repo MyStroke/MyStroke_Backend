@@ -6,7 +6,7 @@ WORKDIR /app
 # copy files
 COPY src/mystroke_backend /app/src/mystroke_backend
 COPY pyproject.toml /app/
-COPY hand_efficientnet_91_224 /app/
+COPY hand_efficientnet_91_224 /app/hand_efficientnet_91_224
 COPY README.md /app/
 COPY .python-version /app/
 
