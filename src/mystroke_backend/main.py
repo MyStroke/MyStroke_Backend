@@ -52,7 +52,7 @@ async def predict(image: Annotated[bytes, File()]):
 
     landmark_list = []
     for landmark in hand_landmark[0].landmark:
-        landmark_list.append(np.array([landmark.x, landmark.y]))
+        landmark_list.append(np.array([landmark.x, landmark.y, landmark.z]))
 
     landmark_array = np.array(landmark_list)
 
